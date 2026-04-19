@@ -5,14 +5,24 @@ import models
 import schemas
 from typing import List
 from datetime import date
+import logging
 
 router = APIRouter(prefix="/reservation", tags=["Reservations"])
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 # Получение списка всех бронирований
 @router.get("/", response_model=List[schemas.ReservationResponse])
 def get_all_reservations(db: Session = Depends(get_db)):
-    reservations = db.query(models.Reservation).all()
-    return reservations
+    try:
+        logger.debug("Попытка получить все бронирования")
+        reservations = db.query(models.Reservation).all()
+        logger.debug(f"Найдено бронирований: {len(reservations)}")
+        return reservations
+    except Exception as e:
+        logger.error(f"Ошибка при получении бронирований: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Внутренняя ошибка сервера: {str(e)}")
 
 # Создание нового бронирования
 @router.post("/", response_model=schemas.ReservationResponse)

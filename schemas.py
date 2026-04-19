@@ -86,3 +86,45 @@ class ReservationResponse(BaseModel):
     
     class Config:
         from_attributes = True
+
+# ---------------- CLIENT ----------------
+class ClientCreate(BaseModel):
+    c_name: str
+    c_lastname: str
+    c_tel: str
+
+
+class ClientUpdate(BaseModel):
+    c_name: Optional[str] = None
+    c_lastname: Optional[str] = None
+    c_tel: Optional[str] = None
+
+
+class ClientResponse(BaseModel):
+    c_id: int
+    c_name: str
+    c_lastname: str
+    c_tel: str
+
+    class Config:
+        from_attributes = True
+
+
+# ---------------- SERVICES ----------------
+class AdditionalServiceCreate(BaseModel):
+    as_name: str
+    as_cost: int
+
+
+class AdditionalServiceUpdate(BaseModel):
+    as_name: Optional[str] = None
+    as_cost: Optional[int] = None
+
+
+class AdditionalServiceResponse(BaseModel):
+    as_id: int
+    as_name: str
+    as_cost: int
+
+    class Config:
+        from_attributes = True
