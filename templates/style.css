@@ -1,0 +1,192 @@
+/* Сброс стилей */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f4f6f9;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Верхняя панель */
+.header {
+    background: #ffffff;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2d3436;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.username {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.avatar {
+    background: #e0e7ff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+/* Основная сетка */
+.grid-container {
+    max-width: 1400px;
+    margin: 30px auto;
+    padding: 0 20px;
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 25px;
+}
+
+/* Стили карточек */
+.card {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    min-height: 200px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+
+.card:active {
+    transform: scale(0.98);
+}
+
+/* Размеры карточек */
+.card-large {
+    grid-column: span 2;
+    min-height: 220px;
+}
+
+.card-half {
+    grid-column: span 1;
+    min-height: 180px;
+}
+
+/* Контент внутри карточки */
+.card-content {
+    text-align: center;
+    padding: 10px;
+}
+
+.icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 15px;
+}
+
+.card h2 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #2d3436;
+    margin-bottom: 10px;
+}
+
+.card p {
+    color: #636e72;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* Индивидуальные цвета при наведении */
+.card:nth-child(1):hover {
+    background: linear-gradient(135deg, #74b9ff, #0984e3);
+    color: white;
+}
+.card:nth-child(1):hover h2,
+.card:nth-child(1):hover p {
+    color: white;
+}
+
+.card:nth-child(2):hover {
+    background: linear-gradient(135deg, #55efc4, #00b894);
+    color: white;
+}
+.card:nth-child(2):hover h2,
+.card:nth-child(2):hover p {
+    color: white;
+}
+
+.card:nth-child(3):hover {
+    background: linear-gradient(135deg, #fd79a8, #e84393);
+    color: white;
+}
+.card:nth-child(3):hover h2,
+.card:nth-child(3):hover p {
+    color: white;
+}
+
+.card:nth-child(4):hover {
+    background: linear-gradient(135deg, #fdcb6e, #f39c12);
+    color: white;
+}
+.card:nth-child(4):hover h2,
+.card:nth-child(4):hover p {
+    color: white;
+}
+
+/* Подвал */
+.footer {
+    text-align: center;
+    padding: 20px;
+    color: #b2bec3;
+    font-size: 0.9rem;
+    margin-top: auto;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+    }
+    .card-large,
+    .card-half {
+        grid-column: span 1;
+        min-height: 150px;
+    }
+    .card h2 {
+        font-size: 1.3rem;
+    }
+    .icon {
+        font-size: 2.5rem;
+    }
+}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель управления отелем</title>
+    <link rel="stylesheet" href="/dashboard.css">
+</head>
+<body>
+    <!-- Верхняя панель -->
+    <header class="header">
+        <div class="logo">🏨 HotelAdmin</div>
+        <div class="user-profile">
+            <span class="username">Администратор</span>
+            <div class="avatar">👤</div>
+        </div>
+    </header>
+
+    <!-- Основная сетка -->
+    <main class="grid-container">
+        <!-- 1. Все бронирования (большой) -->
+        <div class="card card-large" onclick="window.location.href='/allReservations.html'">
+            <div class="card-content">
+                <span class="icon">📋</span>
+                <h2>Все бронирования</h2>
+                <p>Просмотр, редактирование и управление всеми бронированиями</p>
+            </div>
+        </div>
+
+        <!-- 2. Создать новое бронирование (большой) -->
+        <div class="card card-large" onclick="window.location.href='/createReservations.html'">
+            <div class="card-content">
+                <span class="icon">➕</span>
+                <h2>Создать новое бронирование</h2>
+                <p>Добавление нового бронирования для клиента</p>
+            </div>
+        </div>
+
+        <!-- 3. Все номера (половина) -->
+        <div class="card card-half" onclick="window.location.href='/room.html'">
+            <div class="card-content">
+                <span class="icon">🛏️</span>
+                <h2>Все номера</h2>
+                <p>Управление номерами и их статусом</p>
+            </div>
+        </div>
+
+        <!-- 4. Все дополнительные услуги (половина) -->
+        <div class="card card-half" onclick="window.location.href='/additionalServices.html'">
+            <div class="card-content">
+                <span class="icon">🍽️</span>
+                <h2>Все дополнительные услуги</h2>
+                <p>Список услуг и их стоимость</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Подвал (опционально) -->
+    <footer class="footer">
+        <p>Система управления отелем &copy; 2026</p>
+    </footer>
+</body>
+</html>
