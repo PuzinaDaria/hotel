@@ -9,9 +9,14 @@
 <body>
     <header class="header">
         <div class="logo">🏨 HotelAdmin</div>
-        <div class="user-profile">
+        <div class="user-profile" id="profileMenu">
             <span class="username">Администратор</span>
-            <div class="avatar">👤</div>
+            <div class="avatar" id="avatarBtn">👤</div>
+            
+            <div class="dropdown-menu" id="dropdownMenu">
+                <a href="/profile.html" class="dropdown-item">👤 Профиль</a>
+                <a href="/login.html" class="dropdown-item" id="logoutBtn">🚪 Выход</a>
+            </div>
         </div>
     </header>
 
@@ -31,7 +36,6 @@
                 <p>Добавление нового бронирования для клиента</p>
             </div>
         </div>
-
 
         <div class="card card-half" onclick="window.location.href='/room.html'">
             <div class="card-content">
@@ -53,5 +57,28 @@
     <footer class="footer">
         <p>Система управления отелем &copy; 2026</p>
     </footer>
+
+    <script>
+        const avatarBtn = document.getElementById('avatarBtn');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+
+        avatarBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('show');
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!document.getElementById('profileMenu').contains(e.target)) {
+                dropdownMenu.classList.remove('show');
+            }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (confirm('Вы уверены, что хотите выйти?')) {
+                window.location.href = '/login.html';
+            }
+        });
+    </script>
 </body>
 </html>

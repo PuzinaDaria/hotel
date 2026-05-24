@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль пользователя</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f6f9; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        h1 { color: #2d3436; margin-bottom: 30px; }
+        .back-btn { display: inline-block; padding: 10px 20px; background: #dfe6e9; color: #2d3436; text-decoration: none; border-radius: 8px; margin-bottom: 20px; transition: 0.3s; }
+        .back-btn:hover { background: #b2bec3; }
+        .profile-card { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+        .profile-avatar { width: 100px; height: 100px; background: #e0e7ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin: 0 auto 20px; }
+        .profile-field { margin-bottom: 15px; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .profile-field label { color: #636e72; font-size: 0.9rem; display: block; }
+        .profile-field .value { color: #2d3436; font-size: 1.1rem; font-weight: 500; margin-top: 5px; }
+        .btn-edit { display: block; width: 100%; padding: 12px; background: #0984e3; color: white; border: none; border-radius: 10px; font-size: 1rem; cursor: pointer; transition: 0.3s; margin-top: 20px; }
+        .btn-edit:hover { background: #0652DD; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>👤 Профиль</h1>
+        <a href="/" class="back-btn">← Назад к панели</a>
+        
+        <div class="profile-card">
+            <div class="profile-avatar">👨‍💼</div>
+            <div class="profile-field">
+                <label>Имя</label>
+                <div class="value">Иван</div>
+            </div>
+            <div class="profile-field">
+                <label>Фамилия</label>
+                <div class="value">Иванов</div>
+            </div>
+            <div class="profile-field">
+                <label>Логин</label>
+                <div class="value">admin@hotel.ru</div>
+            </div>
+            <div class="profile-field">
+                <label>Статус</label>
+                <div class="value">Администратор</div>
+            </div>
+            <button class="btn-edit">✏️ Редактировать профиль</button>
+        </div>
+    </div>
+</body>
+</html>

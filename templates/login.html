@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в систему</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea, #764ba2); min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; }
+        .auth-container { background: white; border-radius: 20px; padding: 40px; max-width: 400px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        .auth-header { text-align: center; margin-bottom: 30px; }
+        .auth-header h1 { color: #2d3436; font-size: 1.8rem; margin-bottom: 5px; }
+        .auth-header p { color: #636e72; }
+        .tabs { display: flex; margin-bottom: 30px; border-bottom: 2px solid #eee; }
+        .tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; font-weight: 500; color: #636e72; transition: 0.3s; }
+        .tab.active { color: #0984e3; border-bottom: 2px solid #0984e3; }
+        .tab:hover { color: #2d3436; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 5px; font-weight: 500; color: #2d3436; }
+        input { width: 100%; padding: 12px; border: 1px solid #dfe6e9; border-radius: 8px; font-size: 1rem; }
+        input:focus { outline: none; border-color: #0984e3; }
+        .btn-auth { width: 100%; padding: 14px; background: #0984e3; color: white; border: none; border-radius: 10px; font-size: 1rem; cursor: pointer; transition: 0.3s; }
+        .btn-auth:hover { background: #0652DD; }
+        .auth-footer { text-align: center; margin-top: 20px; color: #636e72; font-size: 0.9rem; }
+        .auth-footer a { color: #0984e3; text-decoration: none; }
+        .auth-footer a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>🏨 HotelAdmin</h1>
+            <p>Войдите в систему управления отелем</p>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="showForm('login')">Вход</div>
+            <div class="tab" onclick="showForm('register')">Регистрация</div>
+        </div>
+        
+        <!-- Форма входа -->
+        <div id="loginForm">
+            <div class="form-group">
+                <label>Логин</label>
+                <input type="text" placeholder="Введите логин">
+            </div>
+            <div class="form-group">
+                <label>Пароль</label>
+                <input type="password" placeholder="Введите пароль">
+            </div>
+            <button class="btn-auth" onclick="window.location.href='/dashboard'">Войти</button>
+        </div>
+        
+        <!-- Форма регистрации (скрыта по умолчанию) -->
+        <div id="registerForm" style="display: none;">
+            <div class="form-group">
+                <label>Имя</label>
+                <input type="text" placeholder="Введите имя">
+            </div>
+            <div class="form-group">
+                <label>Фамилия</label>
+                <input type="text" placeholder="Введите фамилию">
+            </div>
+            <div class="form-group">
+                <label>Логин</label>
+                <input type="text" placeholder="Введите логин">
+            </div>
+            <div class="form-group">
+                <label>Пароль</label>
+                <input type="password" placeholder="Придумайте пароль">
+            </div>
+            <button class="btn-auth" onclick="window.location.href='/dashboard'">Зарегистрироваться</button>
+        </div>
+        
+        <div class="auth-footer">
+            <a href="#">Забыли пароль?</a>
+        </div>
+    </div>
+
+    <script>
+        function showForm(type) {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const tabs = document.querySelectorAll('.tab');
+            
+            if (type === 'login') {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+                tabs[0].classList.add('active');
+                tabs[1].classList.remove('active');
+            } else {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+                tabs[0].classList.remove('active');
+                tabs[1].classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

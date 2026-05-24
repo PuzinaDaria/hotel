@@ -43,3 +43,11 @@ async def room_page(request: Request):
 @app.get("/additionalServices.html", response_class=HTMLResponse)
 async def additional_services_page(request: Request):
     return templates.TemplateResponse("additionalServices.html", {"request": request})
+
+@app.get("/profile.html", response_class=HTMLResponse)
+async def profile_page(request: Request):
+    return templates.TemplateResponse("profile.html", {"request": request})
+
+@app.get("/login.html", response_class=HTMLResponse)
+async def login_page(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
