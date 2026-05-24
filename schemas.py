@@ -3,7 +3,6 @@ from typing import Optional
 from datetime import date
 
 
-#admin
 class AdminCreate(BaseModel):
     a_name: str
     a_lastname: str
@@ -29,7 +28,6 @@ class AdminResponse(BaseModel):
     class Config:
         from_attributes = True
 
-#room
 class RoomCreate(BaseModel):
     n_count: int
     n_type: str
@@ -55,7 +53,6 @@ class RoomResponse(BaseModel):
     class Config:
         from_attributes = True
 
-#reservation
 class ReservationCreate(BaseModel):
     a_id: int
     c_id: int
@@ -87,7 +84,6 @@ class ReservationResponse(BaseModel):
     class Config:
         from_attributes = True
 
-# ---------------- CLIENT ----------------
 class ClientCreate(BaseModel):
     c_name: str
     c_lastname: str
@@ -110,7 +106,6 @@ class ClientResponse(BaseModel):
         from_attributes = True
 
 
-# ---------------- SERVICES ----------------
 class AdditionalServiceCreate(BaseModel):
     as_name: str
     as_cost: int

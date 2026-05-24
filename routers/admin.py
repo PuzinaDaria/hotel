@@ -7,13 +7,11 @@ from typing import List
 
 router = APIRouter(prefix="/admin", tags=["Administrators"])
 
-#Получение списка администраторов
 @router.get("/", response_model=List[schemas.AdminResponse])
 def get_all_admins(db: Session = Depends(get_db)):
     admins = db.query(models.Admin).all()
     return admins
 
-#Добавление администратора
 @router.post("/", response_model=schemas.AdminResponse)
 def create_admin(admin: schemas.AdminCreate, db: Session = Depends(get_db)):
     existing_admin = db.query(models.Admin).filter(
@@ -37,7 +35,6 @@ def create_admin(admin: schemas.AdminCreate, db: Session = Depends(get_db)):
     
     return new_admin
 
-#Получение администратора по ID
 @router.get("/{a_id}", response_model=schemas.AdminResponse)
 def get_admin_by_id(a_id: int, db: Session = Depends(get_db)):
     admin = db.query(models.Admin).filter(models.Admin.a_id == a_id).first()
@@ -47,7 +44,6 @@ def get_admin_by_id(a_id: int, db: Session = Depends(get_db)):
     
     return admin
 
-#Обновление данных администратора (можно частичное)
 @router.patch("/{a_id}", response_model=schemas.AdminResponse)
 def update_admin(a_id: int, admin_update: schemas.AdminUpdate, db: Session = Depends(get_db)):
     admin = db.query(models.Admin).filter(models.Admin.a_id == a_id).first()
@@ -65,7 +61,6 @@ def update_admin(a_id: int, admin_update: schemas.AdminUpdate, db: Session = Dep
     
     return admin
 
-# Удаление администратора
 @router.delete("/{a_id}")
 def delete_admin(a_id: int, db: Session = Depends(get_db)):
     admin = db.query(models.Admin).filter(models.Admin.a_id == a_id).first()

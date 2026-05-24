@@ -3,7 +3,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, FileResponse
 from database import engine
 import models
-from routers import admin, room, reservation, clients, additional_services
+from routers import admin, room, reservation, clients, additional_services, auth
 import os
 
 models.Base.metadata.create_all(bind=engine)
@@ -22,6 +22,7 @@ app.include_router(room.router)
 app.include_router(reservation.router)
 app.include_router(clients.router)
 app.include_router(additional_services.router)
+app.include_router(auth.router)
 
 
 @app.get("/", response_class=HTMLResponse)

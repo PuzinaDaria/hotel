@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Номера | Hotel Transylvania</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .rooms-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 20px; }
+        .add-btn {
+            background: linear-gradient(135deg, #2a0808, #4a1010); color: #cc8888;
+            border: 1px solid #8b0000; padding: 12px 24px; border-radius: 6px 18px 6px 18px;
+            font-family: 'Cinzel', serif; cursor: pointer; transition: 0.3s;
+        }
+        .add-btn:hover { background: #5a1515; color: #ffaaaa; box-shadow: 0 0 20px rgba(180,20,30,0.4); }
+        .rooms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; margin-top: 20px; }
+        .room-card {
+            background: linear-gradient(135deg, rgba(12,5,7,0.92), rgba(8,3,5,0.96));
+            border-radius: 8px 24px 8px 24px; padding: 25px; border-left: 5px solid;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5); transition: 0.3s;
+            position: relative;
+        }
+        .room-card:hover { transform: translateY(-6px); box-shadow: 0 15px 35px rgba(180,20,30,0.3); }
+        .room-card.free { border-left-color: #557755; }
+        .room-card.occupied { border-left-color: #8b0000; }
+        .room-card.cleaning { border-left-color: #8b691b; }
+        .room-card h3 { font-family: 'UnifrakturMaguntia', cursive; font-size: 1.6rem; color: #cc8888; margin-bottom: 12px; }
+        .room-card p { color: #aa8888; margin: 8px 0; }
+        .room-status { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; margin-top: 12px; background: rgba(0,0,0,0.4); }
+        .room-actions { margin-top: 15px; display: flex; gap: 10px; }
+        .room-actions button {
+            flex: 1; padding: 8px; background: #2a0808; border: 1px solid #8b0000;
+            color: #cc8888; border-radius: 6px 12px 6px 12px; cursor: pointer;
+        }
+        .room-actions button:hover { background: #4a1010; color: #ffaaaa; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #aa5555; text-decoration: none; }
+        .back-link:hover { color: #cc7777; }
+        h1 { font-family: 'UnifrakturMaguntia', cursive; font-size: 2rem; color: #cc7777; }
+        main { max-width: 100%; margin: 30px 40px; width: calc(100% - 80px); }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            max-width: 500px;
+            background: linear-gradient(135deg, rgba(12,5,7,0.98), rgba(8,3,5,0.99));
+            border-radius: 12px 36px 12px 36px;
+            padding: 35px;
+            border: 1px solid #8b0000;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        }
+        .modal-content h2 {
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: 1.8rem;
+            color: #cc7777;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .modal-content input, .modal-content select {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0a0305;
+            border: 1px solid #5a1515;
+            border-radius: 6px 16px 6px 16px;
+            color: #d4a0a0;
+            font-family: 'Cinzel', serif;
+            margin-bottom: 15px;
+            text-transform: none !important;
+        }
+        .modal-content input:focus, .modal-content select:focus {
+            outline: none;
+            border-color: #cc3333;
+            box-shadow: 0 0 12px rgba(200,30,40,0.4);
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            background: #2a0808;
+            border: 1px solid #8b0000;
+            color: #cc8888;
+            border-radius: 6px 16px 6px 16px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+        }
+        .modal-buttons button:hover {
+            background: #4a1010;
+            color: #ffaaaa;
+        }
+        .close-modal {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #8a6a6a;
+        }
+        .close-modal:hover {
+            color: #ff8888;
+        }
+    </style>
+</head>
+<body>
+    <header class="header"><div class="logo" onclick="window.location.href='/'"><span>Hotel Transylvania</span></div>
+        <div class="user-profile"><span class="username">Администратор</span><div class="avatar" onclick="window.location.href='profile.html'">👤</div></div>
+    </header>
+    <main>
+        <a href="/" class="back-link">← На главную</a>
+        <div class="rooms-header">
+            <h1>🛏️ Управление номерами</h1>
+            <button class="add-btn" onclick="openAddRoomModal()">➕ Добавить номер</button>
+        </div>
+        <div class="rooms-grid" id="roomsGrid"></div>
+    </main>
+
+    <div id="roomModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeRoomModal()">&times;</span>
+            <h2 id="modalTitle">Добавить номер</h2>
+            <input type="hidden" id="editRoomId">
+            <input type="text" id="roomNumber" placeholder="Номер комнаты" required>
+            <input type="text" id="roomType" placeholder="Тип номера" required>
+            <input type="number" id="roomPrice" placeholder="Цена за ночь (₽)" required>
+            <select id="roomStatus">
+                <option value="свободен">Свободен</option>
+                <option value="занят">Занят</option>
+                <option value="на уборке">На уборке</option>
+            </select>
+            <div class="modal-buttons">
+                <button onclick="saveRoom()">Сохранить</button>
+                <button onclick="closeRoomModal()">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadRooms() {
+            try {
+                const response = await fetch('/rooms/');
+                if (!response.ok) {
+                    throw new Error('Ошибка загрузки комнат');
+                }
+                const rooms = await response.json();
+                renderRooms(rooms);
+            } catch (error) {
+                console.error('Ошибка:', error);
+                document.getElementById('roomsGrid').innerHTML = 
+                    '<p style="color: #ff8888; text-align: center; padding: 40px;">❌ Ошибка загрузки номеров</p>';
+            }
+        }
+
+        function renderRooms(rooms) {
+            const statusText = {
+                'свободен': 'Свободен',
+                'занят': 'Занят',
+                'на уборке': 'На уборке'
+            };
+            const statusClass = {
+                'свободен': 'free',
+                'занят': 'occupied',
+                'на уборке': 'cleaning'
+            };
+
+            document.getElementById('roomsGrid').innerHTML = rooms.map(r => `
+                <div class="room-card ${statusClass[r.n_st] || 'free'}">
+                    <h3>№${r.n_count} — ${r.n_type}</h3>
+                    <p>💰 ${r.n_cost.toLocaleString()} ₽ / сутки</p>
+                    <div class="room-status">${statusText[r.n_st] || r.n_st}</div>
+                    <div class="room-actions">
+                        <button onclick="openEditRoomModal(${r.n_id})">✏️ Редактировать</button>
+                        <button onclick="deleteRoom(${r.n_id})">🗑️ Удалить</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        let currentEditId = null;
+
+        function openAddRoomModal() {
+            currentEditId = null;
+            document.getElementById('modalTitle').innerText = 'Добавить номер';
+            document.getElementById('editRoomId').value = '';
+            document.getElementById('roomNumber').value = '';
+            document.getElementById('roomType').value = '';
+            document.getElementById('roomPrice').value = '';
+            document.getElementById('roomStatus').value = 'свободен';
+            document.getElementById('roomModal').style.display = 'flex';
+        }
+
+        function openEditRoomModal(id) {
+            fetch(`/rooms/${id}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Комната не найдена');
+                    return response.json();
+                })
+                .then(room => {
+                    currentEditId = id;
+                    document.getElementById('modalTitle').innerText = 'Редактировать номер';
+                    document.getElementById('editRoomId').value = id;
+                    document.getElementById('roomNumber').value = room.n_count;
+                    document.getElementById('roomType').value = room.n_type;
+                    document.getElementById('roomPrice').value = room.n_cost;
+                    document.getElementById('roomStatus').value = room.n_st || 'свободен';
+                    document.getElementById('roomModal').style.display = 'flex';
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    alert('❌ Не удалось загрузить данные комнаты');
+                });
+        }
+
+        async function saveRoom() {
+            const number = document.getElementById('roomNumber').value.trim();
+            const type = document.getElementById('roomType').value.trim();
+            const price = parseInt(document.getElementById('roomPrice').value);
+            const status = document.getElementById('roomStatus').value;
+            
+            if (!number || !type || !price) {
+                alert('❌ Заполните все поля');
+                return;
+            }
+            
+            const roomData = {
+                n_count: parseInt(number),
+                n_type: type,
+                n_cost: price,
+                n_st: status
+            };
+
+            try {
+                let response;
+                if (currentEditId) {
+                    response = await fetch(`/rooms/${currentEditId}`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(roomData)
+                    });
+                } else {
+                    response = await fetch('/rooms/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(roomData)
+                    });
+                }
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Ошибка сохранения');
+                }
+
+                closeRoomModal();
+                loadRooms(); 
+                alert('✅ Номер сохранен');
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('❌ ' + error.message);
+            }
+        }
+
+        async function deleteRoom(id) {
+            if (!confirm('Удалить номер?')) return;
+            
+            try {
+                const response = await fetch(`/rooms/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Ошибка удаления');
+                }
+                
+                loadRooms(); 
+                alert('✅ Номер удален');
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('❌ ' + error.message);
+            }
+        }
+
+        function closeRoomModal() {
+            document.getElementById('roomModal').style.display = 'none';
+        }
+
+        window.onclick = function(e) {
+            if (e.target === document.getElementById('roomModal')) {
+                closeRoomModal();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadRooms);
+    </script>
+</body>
+</html>

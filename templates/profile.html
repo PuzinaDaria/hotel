@@ -3,47 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Профиль пользователя</title>
+    <title>Профиль | Hotel Transylvania</title>
+    <link rel="stylesheet" href="/style.css">
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f6f9; margin: 0; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; }
-        h1 { color: #2d3436; margin-bottom: 30px; }
-        .back-btn { display: inline-block; padding: 10px 20px; background: #dfe6e9; color: #2d3436; text-decoration: none; border-radius: 8px; margin-bottom: 20px; transition: 0.3s; }
-        .back-btn:hover { background: #b2bec3; }
-        .profile-card { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
-        .profile-avatar { width: 100px; height: 100px; background: #e0e7ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin: 0 auto 20px; }
-        .profile-field { margin-bottom: 15px; padding: 10px 0; border-bottom: 1px solid #eee; }
-        .profile-field label { color: #636e72; font-size: 0.9rem; display: block; }
-        .profile-field .value { color: #2d3436; font-size: 1.1rem; font-weight: 500; margin-top: 5px; }
-        .btn-edit { display: block; width: 100%; padding: 12px; background: #0984e3; color: white; border: none; border-radius: 10px; font-size: 1rem; cursor: pointer; transition: 0.3s; margin-top: 20px; }
-        .btn-edit:hover { background: #0652DD; }
+        .profile-container { max-width: 700px; margin: 40px auto; padding: 0 30px; }
+        .profile-card {
+            background: linear-gradient(135deg, rgba(12,5,7,0.95), rgba(8,3,5,0.98));
+            border-radius: 12px 36px 12px 36px;
+            padding: 40px;
+            border: 1px solid rgba(139,0,0,0.4);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            position: relative;
+        }
+        .profile-card::before { content: '⚔️'; position: absolute; top: 15px; left: 20px; opacity: 0.4; color: #8b0000; }
+        .profile-card::after { content: '⚔️'; position: absolute; bottom: 15px; right: 20px; opacity: 0.4; color: #8b0000; }
+        .profile-avatar {
+            width: 120px; height: 120px;
+            background: linear-gradient(135deg, #2a0808, #4a1010);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 25px;
+            border: 2px solid #8b0000;
+            box-shadow: 0 0 20px rgba(180,20,30,0.4);
+        }
+        .profile-field { margin-bottom: 18px; padding: 12px 0; border-bottom: 1px solid rgba(139,0,0,0.2); }
+        .profile-field label { color: #aa7777; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; display: block; }
+        .profile-field .value { color: #e0c0c0; font-size: 1.1rem; margin-top: 5px; }
+        .btn-edit, .btn-logout {
+            width: 100%; padding: 14px; background: linear-gradient(135deg, #2a0808, #4a1010);
+            color: #cc8888; border: 1px solid #8b0000; border-radius: 6px 18px 6px 18px;
+            font-family: 'Cinzel', serif; cursor: pointer; transition: 0.3s; margin-top: 15px;
+        }
+        .btn-edit:hover, .btn-logout:hover { background: #5a1515; color: #ffaaaa; box-shadow: 0 0 20px rgba(180,20,30,0.4); }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #aa5555; text-decoration: none; }
+        .back-link:hover { color: #cc7777; }
+        h1 { font-family: 'UnifrakturMaguntia', cursive; font-size: 2rem; color: #cc7777; margin-bottom: 20px; }
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 1000; align-items: center; justify-content: center;
+        }
+        .modal-content {
+            max-width: 500px; background: linear-gradient(135deg, rgba(12,5,7,0.98), rgba(8,3,5,0.99));
+            border-radius: 12px 36px 12px 36px; padding: 35px; border: 1px solid #8b0000;
+        }
+        .modal-content h2 { font-family: 'UnifrakturMaguntia', cursive; font-size: 1.8rem; color: #cc7777; text-align: center; margin-bottom: 25px; }
+        .modal-content input {
+            width: 100%; padding: 12px 16px; background: #0a0305; border: 1px solid #5a1515;
+            border-radius: 6px 16px 6px 16px; color: #d4a0a0; margin-bottom: 15px;
+        }
+        .modal-buttons { display: flex; gap: 15px; margin-top: 20px; }
+        .modal-buttons button { flex: 1; padding: 12px; background: #2a0808; border: 1px solid #8b0000; color: #cc8888; border-radius: 6px 16px 6px 16px; cursor: pointer; }
+        .close-modal { float: right; font-size: 1.5rem; cursor: pointer; color: #8a6a6a; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="profile-container">
+        <a href="/" class="back-link">← На главную</a>
         <h1>👤 Профиль</h1>
-        <a href="/" class="back-btn">← Назад к панели</a>
-        
         <div class="profile-card">
-            <div class="profile-avatar">👨‍💼</div>
-            <div class="profile-field">
-                <label>Имя</label>
-                <div class="value">Иван</div>
-            </div>
-            <div class="profile-field">
-                <label>Фамилия</label>
-                <div class="value">Иванов</div>
-            </div>
-            <div class="profile-field">
-                <label>Логин</label>
-                <div class="value">admin@hotel.ru</div>
-            </div>
-            <div class="profile-field">
-                <label>Статус</label>
-                <div class="value">Администратор</div>
-            </div>
-            <button class="btn-edit">✏️ Редактировать профиль</button>
+            <div class="profile-avatar" id="avatarDisplay">👤</div>
+            <div class="profile-field"><label>📛 Имя</label><div class="value" id="nameValue"></div></div>
+            <div class="profile-field"><label>📛 Фамилия</label><div class="value" id="lastnameValue"></div></div>
+            <div class="profile-field"><label>🔑 Логин</label><div class="value" id="loginValue"></div></div>
+            <div class="profile-field"><label>🏨 Роль</label><div class="value">Администратор</div></div>
+            <div class="profile-field"><label>📅 Дата регистрации</label><div class="value" id="dateValue">15 января 2026</div></div>
+            <button class="btn-edit" onclick="openEditModal()">✏️ Редактировать профиль</button>
+            <button class="btn-logout" onclick="logout()">🚪 Выйти из системы</button>
         </div>
     </div>
+
+    <div id="editModal" class="modal">
+        <div class="modal-content"><span class="close-modal" onclick="closeEditModal()">&times;</span>
+            <h2>Редактирование</h2>
+            <div class="form-row">
+                <input type="text" id="editName" placeholder="Имя">
+                <input type="text" id="editLastname" placeholder="Фамилия">
+            </div>
+            <input type="text" id="editLogin" placeholder="Логин">
+            <div class="modal-buttons"><button onclick="saveProfile()">Сохранить</button><button onclick="closeEditModal()">Отмена</button></div>
+        </div>
+    </div>
+
+    <script>
+        let user = JSON.parse(localStorage.getItem('hotel_user') || '{"name":"Администратор","lastname":"","login":"admin"}');
+        
+        function loadProfile() {
+            document.getElementById('nameValue').innerText = user.name || 'Администратор';
+            document.getElementById('lastnameValue').innerText = user.lastname || '';
+            document.getElementById('loginValue').innerText = user.login || 'admin';
+            document.getElementById('avatarDisplay').innerHTML = (user.name ? user.name[0] : 'А').toUpperCase();
+        }
+        
+        function openEditModal() {
+            document.getElementById('editName').value = user.name || '';
+            document.getElementById('editLastname').value = user.lastname || '';
+            document.getElementById('editLogin').value = user.login || '';
+            document.getElementById('editModal').style.display = 'flex';
+        }
+        
+        function closeEditModal() { 
+            document.getElementById('editModal').style.display = 'none'; 
+        }
+        
+        function saveProfile() {
+            user.name = document.getElementById('editName').value.trim();
+            user.lastname = document.getElementById('editLastname').value.trim();
+            user.login = document.getElementById('editLogin').value.trim();
+            localStorage.setItem('hotel_user', JSON.stringify(user));
+            loadProfile();
+            closeEditModal();
+            alert('✅ Профиль обновлен');
+        }
+        
+        function logout() { 
+            localStorage.removeItem('hotel_user'); 
+            window.location.href = '/login.html'; 
+        }
+        
+        loadProfile();
+        
+        window.onclick = function(e) { 
+            if(e.target === document.getElementById('editModal')) closeEditModal(); 
+        }
+    </script>
 </body>
 </html>

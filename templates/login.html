@@ -3,96 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход в систему</title>
+    <title>Вход | Hotel Transylvania</title>
+    <link rel="stylesheet" href="/style.css">
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea, #764ba2); min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; }
-        .auth-container { background: white; border-radius: 20px; padding: 40px; max-width: 400px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-        .auth-header { text-align: center; margin-bottom: 30px; }
-        .auth-header h1 { color: #2d3436; font-size: 1.8rem; margin-bottom: 5px; }
-        .auth-header p { color: #636e72; }
-        .tabs { display: flex; margin-bottom: 30px; border-bottom: 2px solid #eee; }
-        .tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; font-weight: 500; color: #636e72; transition: 0.3s; }
-        .tab.active { color: #0984e3; border-bottom: 2px solid #0984e3; }
-        .tab:hover { color: #2d3436; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 5px; font-weight: 500; color: #2d3436; }
-        input { width: 100%; padding: 12px; border: 1px solid #dfe6e9; border-radius: 8px; font-size: 1rem; }
-        input:focus { outline: none; border-color: #0984e3; }
-        .btn-auth { width: 100%; padding: 14px; background: #0984e3; color: white; border: none; border-radius: 10px; font-size: 1rem; cursor: pointer; transition: 0.3s; }
-        .btn-auth:hover { background: #0652DD; }
-        .auth-footer { text-align: center; margin-top: 20px; color: #636e72; font-size: 0.9rem; }
-        .auth-footer a { color: #0984e3; text-decoration: none; }
-        .auth-footer a:hover { text-decoration: underline; }
+        .auth-container {
+            max-width: 500px;
+            margin: 80px auto;
+            background: linear-gradient(135deg, rgba(12,5,7,0.95), rgba(8,3,5,0.98));
+            border-radius: 12px 36px 12px 36px;
+            padding: 45px;
+            border: 1px solid rgba(139,0,0,0.5);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            position: relative;
+        }
+        .auth-container::before { content: '⚔️'; position: absolute; top: 15px; left: 20px; opacity: 0.4; color: #8b0000; }
+        .auth-container::after { content: '⚔️'; position: absolute; bottom: 15px; right: 20px; opacity: 0.4; color: #8b0000; }
+        .auth-header { text-align: center; margin-bottom: 35px; }
+        .auth-header h1 { font-family: 'UnifrakturMaguntia', cursive; font-size: 2rem; color: #cc7777; }
+        .tabs { display: flex; margin-bottom: 35px; border-bottom: 1px solid rgba(139,0,0,0.3); }
+        .tab { flex: 1; text-align: center; padding: 12px; cursor: pointer; color: #8a6a6a; transition: 0.3s; }
+        .tab:hover { color: #cc8888; }
+        .tab.active { color: #cc5555; border-bottom: 2px solid #cc3333; }
+        .form-group { margin-bottom: 22px; }
+        label { display: block; margin-bottom: 8px; color: #cc8888; font-size: 0.85rem; }
+        input {
+            width: 100%; padding: 14px 18px; background: #0a0305; border: 1px solid #5a1515;
+            border-radius: 6px 16px 6px 16px; color: #d4a0a0; font-family: 'Cinzel', serif;
+            text-transform: none !important;  /* ← ВАЖНО: отключаем преобразование регистра */
+        }
+        input:focus { outline: none; border-color: #cc3333; box-shadow: 0 0 14px rgba(200,30,40,0.4); }
+        .btn-auth {
+            width: 100%; padding: 14px; background: linear-gradient(135deg, #2a0808, #4a1010);
+            color: #cc8888; border: 1px solid #8b0000; border-radius: 6px 18px 6px 18px;
+            font-family: 'Cinzel', serif; cursor: pointer; transition: 0.3s;
+        }
+        .btn-auth:hover { background: #5a1515; color: #ffaaaa; box-shadow: 0 0 20px rgba(180,20,30,0.4); }
+        .auth-footer { text-align: center; margin-top: 25px; color: #6a4a4a; }
+        .auth-footer a { color: #cc7777; text-decoration: none; }
+        .error-msg { background: rgba(180,20,30,0.2); border: 1px solid #8b0000; border-radius: 8px; padding: 10px; margin-bottom: 20px; color: #ff8888; text-align: center; }
+        .success-msg { background: rgba(0,184,148,0.15); border: 1px solid #00b894; border-radius: 8px; padding: 10px; margin-bottom: 20px; color: #55efc4; text-align: center; }
+        .loader { display: none; width: 30px; height: 30px; border: 3px solid #3a1515; border-top: 3px solid #cc3333; border-radius: 50%; margin: 0 auto 15px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .auth-container input {
+            text-transform: none !important;
+        }
     </style>
 </head>
 <body>
     <div class="auth-container">
-        <div class="auth-header">
-            <h1>🏨 HotelAdmin</h1>
-            <p>Войдите в систему управления отелем</p>
-        </div>
-        
-        <div class="tabs">
-            <div class="tab active" onclick="showForm('login')">Вход</div>
-            <div class="tab" onclick="showForm('register')">Регистрация</div>
-        </div>
-        
-        <!-- Форма входа -->
+        <div class="auth-header"><h1>🏨 Hotel Transylvania</h1><p>Войдите в систему управления</p></div>
+        <div class="tabs"><div class="tab active" onclick="showForm('login')">Вход</div><div class="tab" onclick="showForm('register')">Регистрация</div></div>
+
         <div id="loginForm">
-            <div class="form-group">
-                <label>Логин</label>
-                <input type="text" placeholder="Введите логин">
-            </div>
-            <div class="form-group">
-                <label>Пароль</label>
-                <input type="password" placeholder="Введите пароль">
-            </div>
-            <button class="btn-auth" onclick="window.location.href='/dashboard'">Войти</button>
+            <div id="loginError" class="error-msg" style="display:none;"></div>
+            <div class="loader" id="loginLoader"></div>
+            <div class="form-group"><label>🔑 Логин</label><input type="text" id="loginLogin" placeholder="Введите логин"></div>
+            <div class="form-group"><label>🔒 Пароль</label><input type="password" id="loginPassword" placeholder="••••••••"></div>
+            <button class="btn-auth" onclick="handleLogin()">Войти</button>
         </div>
-        
-        <!-- Форма регистрации (скрыта по умолчанию) -->
-        <div id="registerForm" style="display: none;">
-            <div class="form-group">
-                <label>Имя</label>
-                <input type="text" placeholder="Введите имя">
-            </div>
-            <div class="form-group">
-                <label>Фамилия</label>
-                <input type="text" placeholder="Введите фамилию">
-            </div>
-            <div class="form-group">
-                <label>Логин</label>
-                <input type="text" placeholder="Введите логин">
-            </div>
-            <div class="form-group">
-                <label>Пароль</label>
-                <input type="password" placeholder="Придумайте пароль">
-            </div>
-            <button class="btn-auth" onclick="window.location.href='/dashboard'">Зарегистрироваться</button>
+
+        <div id="registerForm" style="display:none;">
+            <div id="registerError" class="error-msg" style="display:none;"></div>
+            <div id="registerSuccess" class="success-msg" style="display:none;"></div>
+            <div class="loader" id="registerLoader"></div>
+            <div class="form-group"><label>👤 Имя</label><input type="text" id="regName" placeholder="Иван"></div>
+            <div class="form-group"><label>👤 Фамилия</label><input type="text" id="regLastname" placeholder="Иванов"></div>
+            <div class="form-group"><label>🔑 Логин</label><input type="text" id="regLogin" placeholder="Придумайте логин"></div>
+            <div class="form-group"><label>🔒 Пароль</label><input type="password" id="regPassword" placeholder="минимум 6 символов"></div>
+            <div class="form-group"><label>🔒 Подтверждение</label><input type="password" id="regConfirm" placeholder="повторите пароль"></div>
+            <button class="btn-auth" onclick="handleRegister()">Зарегистрироваться</button>
         </div>
-        
-        <div class="auth-footer">
-            <a href="#">Забыли пароль?</a>
-        </div>
+
+        <div class="auth-footer"><a href="#" onclick="showForm('login')">Забыли пароль?</a></div>
     </div>
 
     <script>
         function showForm(type) {
-            const loginForm = document.getElementById('loginForm');
-            const registerForm = document.getElementById('registerForm');
-            const tabs = document.querySelectorAll('.tab');
+            document.getElementById('loginForm').style.display = type === 'login' ? 'block' : 'none';
+            document.getElementById('registerForm').style.display = type === 'register' ? 'block' : 'none';
+            document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', (type === 'login' && i === 0) || (type === 'register' && i === 1)));
             
-            if (type === 'login') {
-                loginForm.style.display = 'block';
-                registerForm.style.display = 'none';
-                tabs[0].classList.add('active');
-                tabs[1].classList.remove('active');
-            } else {
-                loginForm.style.display = 'none';
-                registerForm.style.display = 'block';
-                tabs[0].classList.remove('active');
-                tabs[1].classList.add('active');
+            document.getElementById('loginError').style.display = 'none';
+            document.getElementById('registerError').style.display = 'none';
+            document.getElementById('registerSuccess').style.display = 'none';
+        }
+
+        async function handleLogin() {
+            const login = document.getElementById('loginLogin').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+            const loader = document.getElementById('loginLoader');
+            
+            if (!login || !password) {
+                errorDiv.textContent = '❌ Заполните все поля';
+                errorDiv.style.display = 'block';
+                return;
             }
+            
+            loader.style.display = 'block';
+            errorDiv.style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ login, password })
+                });
+                
+                const data = await response.json();
+                loader.style.display = 'none';
+                
+                if (data.success) {
+                    localStorage.setItem('hotel_user', JSON.stringify(data.user));
+                    window.location.href = '/';
+                } else {
+                    errorDiv.textContent = '❌ ' + (data.error || 'Неверный логин или пароль');
+                    errorDiv.style.display = 'block';
+                }
+            } catch (error) {
+                loader.style.display = 'none';
+                errorDiv.textContent = '❌ Ошибка соединения с сервером';
+                errorDiv.style.display = 'block';
+                console.error('Login error:', error);
+            }
+        }
+
+        async function handleRegister() {
+            const name = document.getElementById('regName').value.trim();
+            const lastname = document.getElementById('regLastname').value.trim();
+            const login = document.getElementById('regLogin').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const confirm = document.getElementById('regConfirm').value;
+            const errorDiv = document.getElementById('registerError');
+            const successDiv = document.getElementById('registerSuccess');
+            const loader = document.getElementById('registerLoader');
+            
+            if (!name || !lastname || !login || !password) {
+                errorDiv.textContent = '❌ Заполните все поля';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            if (password.length < 6) {
+                errorDiv.textContent = '❌ Пароль должен быть минимум 6 символов';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            if (password !== confirm) {
+                errorDiv.textContent = '❌ Пароли не совпадают';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            loader.style.display = 'block';
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, lastname, login, password })
+                });
+                
+                const data = await response.json();
+                loader.style.display = 'none';
+                
+                if (data.success) {
+                    successDiv.textContent = '✅ Регистрация успешна! Теперь войдите.';
+                    successDiv.style.display = 'block';
+                    document.getElementById('regName').value = '';
+                    document.getElementById('regLastname').value = '';
+                    document.getElementById('regLogin').value = '';
+                    document.getElementById('regPassword').value = '';
+                    document.getElementById('regConfirm').value = '';
+                    setTimeout(() => showForm('login'), 2000);
+                } else {
+                    errorDiv.textContent = '❌ ' + (data.error || 'Ошибка регистрации');
+                    errorDiv.style.display = 'block';
+                }
+            } catch (error) {
+                loader.style.display = 'none';
+                errorDiv.textContent = '❌ Ошибка соединения с сервером';
+                errorDiv.style.display = 'block';
+                console.error('Register error:', error);
+            }
+        }
+
+        if (localStorage.getItem('hotel_user')) {
+            window.location.href = '/';
         }
     </script>
 </body>

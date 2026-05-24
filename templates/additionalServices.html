@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Услуги | Hotel Transylvania</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .services-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 20px; }
+        .add-btn {
+            background: linear-gradient(135deg, #2a0808, #4a1010); color: #cc8888;
+            border: 1px solid #8b0000; padding: 12px 24px; border-radius: 6px 18px 6px 18px;
+            font-family: 'Cinzel', serif; cursor: pointer; transition: 0.3s;
+        }
+        .add-btn:hover { background: #5a1515; color: #ffaaaa; box-shadow: 0 0 20px rgba(180,20,30,0.4); }
+        .services-container { max-width: 1000px; margin: 30px auto; padding: 0 30px; }
+        .services-list { background: rgba(8,3,5,0.85); border-radius: 10px 28px 10px 28px; overflow: hidden; margin: 20px 0; border: 1px solid #3a1515; }
+        .service-item { display: flex; justify-content: space-between; align-items: center; padding: 22px 32px; border-bottom: 1px solid #2a1010; }
+        .service-item:hover { background: rgba(100,20,25,0.15); }
+        .service-info { flex: 1; }
+        .service-name { font-size: 1.1rem; color: #d4a0a0; }
+        .service-price { font-weight: bold; color: #cc5555; font-size: 1.3rem; margin: 0 20px; }
+        .service-actions { display: flex; gap: 10px; }
+        .service-actions button {
+            padding: 8px 16px; background: #2a0808; border: 1px solid #8b0000;
+            color: #cc8888; border-radius: 6px 12px 6px 12px; cursor: pointer;
+            font-family: 'Cinzel', serif;
+        }
+        .service-actions button:hover { background: #4a1010; color: #ffaaaa; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #aa5555; text-decoration: none; }
+        .back-link:hover { color: #cc7777; }
+        h1 { font-family: 'UnifrakturMaguntia', cursive; font-size: 2rem; color: #cc7777; }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            max-width: 500px;
+            background: linear-gradient(135deg, rgba(12,5,7,0.98), rgba(8,3,5,0.99));
+            border-radius: 12px 36px 12px 36px;
+            padding: 35px;
+            border: 1px solid #8b0000;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        }
+        .modal-content h2 {
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: 1.8rem;
+            color: #cc7777;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .modal-content input {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0a0305;
+            border: 1px solid #5a1515;
+            border-radius: 6px 16px 6px 16px;
+            color: #d4a0a0;
+            font-family: 'Cinzel', serif;
+            margin-bottom: 15px;
+            text-transform: none !important;
+        }
+        .modal-content input:focus {
+            outline: none;
+            border-color: #cc3333;
+            box-shadow: 0 0 12px rgba(200,30,40,0.4);
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            background: #2a0808;
+            border: 1px solid #8b0000;
+            color: #cc8888;
+            border-radius: 6px 16px 6px 16px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+        }
+        .modal-buttons button:hover {
+            background: #4a1010;
+            color: #ffaaaa;
+        }
+        .close-modal {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #8a6a6a;
+        }
+        .close-modal:hover {
+            color: #ff8888;
+        }
+    </style>
+</head>
+<body>
+    <header class="header"><div class="logo" onclick="window.location.href='/'"><span>Hotel Transylvania</span></div>
+        <div class="user-profile"><span class="username">Администратор</span><div class="avatar" onclick="window.location.href='profile.html'">👤</div></div>
+    </header>
+    <main>
+        <div class="services-container">
+            <a href="/" class="back-link">← На главную</a>
+            <div class="services-header">
+                <h1>🍽️ Дополнительные услуги</h1>
+                <button class="add-btn" onclick="openAddServiceModal()">➕ Добавить услугу</button>
+            </div>
+            <div class="services-list" id="servicesList"></div>
+        </div>
+    </main>
+
+    <div id="serviceModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeServiceModal()">&times;</span>
+            <h2 id="serviceModalTitle">Добавить услугу</h2>
+            <input type="hidden" id="editServiceId">
+            <input type="text" id="serviceName" placeholder="Название услуги" required>
+            <input type="number" id="servicePrice" placeholder="Цена (₽)" required>
+            <div class="modal-buttons">
+                <button onclick="saveService()">Сохранить</button>
+                <button onclick="closeServiceModal()">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadServices() {
+            try {
+                const response = await fetch('/services/');
+                if (!response.ok) {
+                    throw new Error('Ошибка загрузки услуг');
+                }
+                const services = await response.json();
+                renderServices(services);
+            } catch (error) {
+                console.error('Ошибка:', error);
+                document.getElementById('servicesList').innerHTML = 
+                    '<p style="color: #ff8888; text-align: center; padding: 40px;">❌ Ошибка загрузки услуг</p>';
+            }
+        }
+
+        function renderServices(services) {
+            document.getElementById('servicesList').innerHTML = services.map(s => `
+                <div class="service-item">
+                    <div class="service-info">
+                        <div class="service-name">✨ ${s.as_name}</div>
+                    </div>
+                    <div class="service-price">${s.as_cost.toLocaleString()} ₽</div>
+                    <div class="service-actions">
+                        <button onclick="openEditServiceModal(${s.as_id})">✏️</button>
+                        <button onclick="deleteService(${s.as_id})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        let currentEditId = null;
+
+        function openAddServiceModal() {
+            currentEditId = null;
+            document.getElementById('serviceModalTitle').innerText = 'Добавить услугу';
+            document.getElementById('editServiceId').value = '';
+            document.getElementById('serviceName').value = '';
+            document.getElementById('servicePrice').value = '';
+            document.getElementById('serviceModal').style.display = 'flex';
+        }
+
+        function openEditServiceModal(id) {
+            fetch(`/services/${id}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Услуга не найдена');
+                    return response.json();
+                })
+                .then(service => {
+                    currentEditId = id;
+                    document.getElementById('serviceModalTitle').innerText = 'Редактировать услугу';
+                    document.getElementById('editServiceId').value = id;
+                    document.getElementById('serviceName').value = service.as_name;
+                    document.getElementById('servicePrice').value = service.as_cost;
+                    document.getElementById('serviceModal').style.display = 'flex';
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    alert('❌ Не удалось загрузить данные услуги');
+                });
+        }
+
+        async function saveService() {
+            const name = document.getElementById('serviceName').value.trim();
+            const price = parseInt(document.getElementById('servicePrice').value);
+            
+            if (!name || !price || price <= 0) {
+                alert('❌ Введите корректные данные');
+                return;
+            }
+            
+            const serviceData = {
+                as_name: name,
+                as_cost: price
+            };
+
+            try {
+                let response;
+                if (currentEditId) {
+                    response = await fetch(`/services/${currentEditId}`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(serviceData)
+                    });
+                } else {
+                    response = await fetch('/services/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(serviceData)
+                    });
+                }
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Ошибка сохранения');
+                }
+
+                closeServiceModal();
+                loadServices();
+                alert('✅ Услуга сохранена');
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('❌ ' + error.message);
+            }
+        }
+
+        async function deleteService(id) {
+            if (!confirm('Удалить услугу?')) return;
+            
+            try {
+                const response = await fetch(`/services/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Ошибка удаления');
+                }
+                
+                loadServices();
+                alert('✅ Услуга удалена');
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('❌ ' + error.message);
+            }
+        }
+
+        function closeServiceModal() {
+            document.getElementById('serviceModal').style.display = 'none';
+        }
+
+        window.onclick = function(e) {
+            if (e.target === document.getElementById('serviceModal')) {
+                closeServiceModal();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadServices);
+    </script>
+</body>
+</html>

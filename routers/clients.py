@@ -36,7 +36,6 @@ def put_client(c_id: int, client_data: schemas.ClientCreate, db: Session = Depen
     if not client:
         raise HTTPException(status_code=404, detail="Клиент не найден")
 
-    # полностью перезаписываем все поля
     for key, value in client_data.dict().items():
         setattr(client, key, value)
 

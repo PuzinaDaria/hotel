@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Все бронирования | Hotel Transylvania</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .actions-bar { display: flex; justify-content: space-between; margin-bottom: 30px; flex-wrap: wrap; gap: 20px; }
+        .search-box, .filter-select {
+            background: rgba(8,3,5,0.9); border: 1px solid #5a0000; color: #d4a0a0;
+            padding: 14px 22px; border-radius: 6px 20px 6px 20px; font-family: 'Cinzel', serif;
+        }
+        .search-box:focus, .filter-select:focus { outline: none; border-color: #cc3333; box-shadow: 0 0 14px rgba(200,30,40,0.4); }
+        .reservations-table {
+            width: 100%; border-collapse: collapse; background: rgba(8,3,5,0.85);
+            border-radius: 8px 24px 8px 24px; overflow: hidden; font-family: 'Cinzel', serif;
+        }
+        .reservations-table th, .reservations-table td { padding: 18px; text-align: left; border-bottom: 1px solid #3a1515; }
+        .reservations-table th { background: #0a0204; color: #cc8888; }
+        .reservations-table tr:hover { background: rgba(100,20,25,0.2); }
+        .status { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; }
+        .status.активно { background: #1a0a0a; color: #aa5555; border: 1px solid #8b0000; }
+        .status.ожидание { background: #1a1508; color: #c9a03d; border: 1px solid #8b691b; }
+        .status.завершено { background: #1a0a2a; color: #aa88cc; border: 1px solid #6a1b8b; }
+        .status.отменено { background: #1a0505; color: #661111; border: 1px solid #440000; text-decoration: line-through; }
+        .action-btn {
+            padding: 6px 16px; border: none; border-radius: 5px 12px 5px 12px; cursor: pointer;
+            font-family: 'Cinzel', serif; margin: 0 5px; transition: 0.2s;
+        }
+        .edit-btn { background: #2a1515; color: #cc8888; border: 1px solid #8b0000; }
+        .cancel-btn { background: #2a0505; color: #aa5555; border: 1px solid #660000; }
+        .action-btn:hover { transform: scale(0.96); box-shadow: 0 0 12px rgba(200,30,40,0.4); }
+        .back-link { display: inline-block; margin-bottom: 25px; color: #aa5555; text-decoration: none; font-family: 'Cinzel', serif; }
+        .back-link:hover { color: #cc7777; }
+        h1 { font-family: 'UnifrakturMaguntia', cursive; font-size: 2rem; color: #cc7777; margin-bottom: 25px; }
+        main { max-width: 100%; margin: 30px 40px; padding: 0; width: calc(100% - 80px); }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+            padding: 20px;
+            scrollbar-width: none;
+        }
+        .modal::-webkit-scrollbar {
+            display: none;
+        }
+        .modal-content {
+            max-width: 700px;
+            width: 100%;
+            background: linear-gradient(135deg, rgba(12,5,7,0.98), rgba(8,3,5,0.99));
+            border-radius: 12px 36px 12px 36px;
+            padding: 35px;
+            border: 1px solid #8b0000;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            margin: auto;
+            max-height: 90vh;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+        .modal-content::-webkit-scrollbar {
+            display: none;
+        }
+        .modal-content h2 {
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: 1.8rem;
+            color: #cc7777;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .modal-content input, .modal-content select {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0a0305;
+            border: 1px solid #5a1515;
+            border-radius: 6px 16px 6px 16px;
+            color: #d4a0a0;
+            font-family: 'Cinzel', serif;
+            margin-bottom: 15px;
+            text-transform: none !important;
+        }
+        .modal-content input:focus, .modal-content select:focus {
+            outline: none;
+            border-color: #cc3333;
+            box-shadow: 0 0 12px rgba(200,30,40,0.4);
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            background: #2a0808;
+            border: 1px solid #8b0000;
+            color: #cc8888;
+            border-radius: 6px 16px 6px 16px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+        }
+        .modal-buttons button:hover {
+            background: #4a1010;
+            color: #ffaaaa;
+        }
+        .close-modal {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #8a6a6a;
+        }
+        .close-modal:hover {
+            color: #ff8888;
+        }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-card { border-radius: 10px; padding: 15px; margin-bottom: 20px; }
+        .services-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+        .service-tag {
+            background: rgba(139,0,0,0.3);
+            border: 1px solid #8b0000;
+            border-radius: 4px 12px 4px 12px;
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            color: #cc8888;
+        }
+        @media (max-width: 600px) {
+            .form-row { grid-template-columns: 1fr; }
+            .modal-content { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header"><div class="logo" onclick="window.location.href='/'"><span>Hotel Transylvania</span></div>
+        <div class="user-profile"><span class="username">Администратор</span><div class="avatar" onclick="window.location.href='profile.html'">👤</div></div>
+    </header>
+    <main>
+        <a href="/" class="back-link">← На главную</a>
+        <h1>📋 Все бронирования</h1>
+        
+        <div class="actions-bar">
+            <input type="text" class="search-box" placeholder="Поиск по имени или номеру..." id="searchInput">
+            <select class="filter-select" id="statusFilter">
+                <option value="all">Все статусы</option>
+                <option value="активно">Активно</option>
+                <option value="ожидание">Ожидание</option>
+                <option value="завершено">Завершено</option>
+                <option value="отменено">Отменено</option>
+            </select>
+        </div>
+        
+        <table class="reservations-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Гость</th>
+                    <th>Телефон</th>
+                    <th>Номер</th>
+                    <th>Услуги</th>
+                    <th>Заезд</th>
+                    <th>Выезд</th>
+                    <th>Статус</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </main>
+
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeEditModal()">&times;</span>
+            <h2>Редактировать бронирование</h2>
+            <input type="hidden" id="editReservationId">
+            <input type="hidden" id="editClientId">
+            
+            <div class="form-card" style="background: rgba(0,0,0,0.3);">
+                <h3 style="color: #cc8888; font-family: 'UnifrakturMaguntia', cursive; margin-bottom: 15px;">👤 Данные клиента</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Имя</label>
+                        <input type="text" id="editClientName">
+                    </div>
+                    <div class="form-group">
+                        <label>Фамилия</label>
+                        <input type="text" id="editClientLastname">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Телефон</label>
+                    <input type="text" id="editClientPhone">
+                </div>
+            </div>
+            
+            <div class="form-card" style="background: rgba(0,0,0,0.3);">
+                <h3 style="color: #cc8888; font-family: 'UnifrakturMaguntia', cursive; margin-bottom: 15px;">📋 Данные бронирования</h3>
+                <div class="form-group">
+                    <label>Администратор</label>
+                    <select id="editAdminSelect">
+                        <option value="">Выберите администратора...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Номер</label>
+                    <select id="editRoomSelect">
+                        <option value="">Выберите номер...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Дополнительные услуги (выберите несколько)</label>
+                    <div id="editServicesContainer"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Дата заезда</label>
+                        <input type="date" id="editCheckIn">
+                    </div>
+                    <div class="form-group">
+                        <label>Дата выезда</label>
+                        <input type="date" id="editCheckOut">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Статус</label>
+                    <select id="editStatus">
+                        <option value="активно">Активно</option>
+                        <option value="ожидание">Ожидание</option>
+                        <option value="завершено">Завершено</option>
+                        <option value="отменено">Отменено</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="modal-buttons">
+                <button onclick="saveEditReservation()">Сохранить</button>
+                <button onclick="closeEditModal()">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allReservations = [];
+        let adminsList = [];
+        let roomsList = [];
+        let servicesList = [];
+
+        async function loadReservations() {
+            try {
+                const response = await fetch('/reservation/');
+                if (!response.ok) {
+                    throw new Error('Ошибка загрузки бронирований');
+                }
+                allReservations = await response.json();
+                renderTable();
+            } catch (error) {
+                console.error('Ошибка:', error);
+                document.getElementById('tableBody').innerHTML = 
+                    '<tr><td colspan="9" style="text-align:center; color:#ff8888; padding:40px;">❌ Ошибка загрузки бронирований</td></tr>';
+            }
+        }
+
+        async function loadLists() {
+            try {
+                const adminsRes = await fetch('/reservation/admins/list');
+                adminsList = await adminsRes.json();
+                
+                const roomsRes = await fetch('/reservation/rooms/list');
+                roomsList = await roomsRes.json();
+                
+                const servicesRes = await fetch('/reservation/services/list');
+                servicesList = await servicesRes.json();
+                
+                populateSelects();
+                populateEditServices();
+            } catch (error) {
+                console.error('Ошибка загрузки списков:', error);
+            }
+        }
+
+        function populateSelects() {
+            const adminSelect = document.getElementById('editAdminSelect');
+            adminSelect.innerHTML = '<option value="">Выберите администратора...</option>';
+            adminsList.forEach(a => {
+                const option = document.createElement('option');
+                option.value = a.a_id;
+                option.textContent = `${a.a_name} ${a.a_lastname}`;
+                adminSelect.appendChild(option);
+            });
+
+            const roomSelect = document.getElementById('editRoomSelect');
+            roomSelect.innerHTML = '<option value="">Выберите номер...</option>';
+            roomsList.forEach(r => {
+                const option = document.createElement('option');
+                option.value = r.n_id;
+                option.textContent = `№${r.n_count} - ${r.n_type}`;
+                roomSelect.appendChild(option);
+            });
+        }
+
+        function populateEditServices() {
+            const container = document.getElementById('editServicesContainer');
+            container.innerHTML = '';
+            servicesList.forEach(s => {
+                const div = document.createElement('div');
+                div.className = 'service-checkbox';
+                div.style.cssText = 'display:flex; align-items:center; gap:12px; padding:8px 12px; margin-bottom:6px; background:rgba(0,0,0,0.3); border-radius:4px 12px 4px 12px; border:1px solid #3a1515;';
+                div.innerHTML = `
+                    <input type="checkbox" id="edit_service_${s.as_id}" value="${s.as_id}" style="width:18px; height:18px; accent-color:#cc3333;">
+                    <label for="edit_service_${s.as_id}" style="cursor:pointer; flex:1; margin:0;">${s.as_name} (${s.as_cost}₽)</label>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderTable() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const filter = document.getElementById('statusFilter').value;
+            
+            const filtered = allReservations.filter(r => {
+                const matchesSearch = r.guest.toLowerCase().includes(search) || 
+                                      r.room_number.toString().includes(search);
+                const matchesStatus = filter === 'all' || r.status === filter;
+                return matchesSearch && matchesStatus;
+            });
+
+            const statusLabels = {
+                'активно': 'Активно',
+                'ожидание': 'Ожидание',
+                'завершено': 'Завершено',
+                'отменено': 'Отменено'
+            };
+
+            document.getElementById('tableBody').innerHTML = filtered.map(r => `
+                <tr>
+                    <td>${r.r_id}</td>
+                    <td>${r.guest}</td>
+                    <td>${r.phone}</td>
+                    <td>№${r.room_number} (${r.room_type})</td>
+                    <td>
+                        <div class="services-list">
+                            ${r.services && r.services.length > 0 
+                                ? r.services.map(s => `<span class="service-tag">${s}</span>`).join('')
+                                : '<span style="color:#6a4a4a; font-size:0.85rem;">Без услуг</span>'
+                            }
+                        </div>
+                    </td>
+                    <td>${r.check_in}</td>
+                    <td>${r.check_out}</td>
+                    <td><span class="status ${r.status}">${statusLabels[r.status] || r.status}</span></td>
+                    <td>
+                        <button class="action-btn edit-btn" onclick="openEditModal(${r.r_id})">✏️</button>
+                        <button class="action-btn cancel-btn" onclick="deleteReservation(${r.r_id})">🗑️</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openEditModal(id) {
+            const reservation = allReservations.find(r => r.r_id === id);
+            if (!reservation) {
+                alert('❌ Бронирование не найдено');
+                return;
+            }
+            
+            fetch(`/reservation/${id}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Ошибка загрузки данных');
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('editReservationId').value = id;
+                    document.getElementById('editClientId').value = data.c_id;
+                    document.getElementById('editClientName').value = data.guest_name || '';
+                    document.getElementById('editClientLastname').value = data.guest_lastname || '';
+                    document.getElementById('editClientPhone').value = data.phone || '';
+                    document.getElementById('editCheckIn').value = data.check_in;
+                    document.getElementById('editCheckOut').value = data.check_out;
+                    document.getElementById('editStatus').value = data.status;
+
+                    const adminSelect = document.getElementById('editAdminSelect');
+                    const roomSelect = document.getElementById('editRoomSelect');
+
+                    adminSelect.value = '';
+                    roomSelect.value = '';
+
+                    document.querySelectorAll('#editServicesContainer input[type="checkbox"]').forEach(cb => {
+                        cb.checked = false;
+                    });
+                    if (data.services) {
+                        data.services.forEach(s => {
+                            const cb = document.getElementById(`edit_service_${s.id}`);
+                            if (cb) cb.checked = true;
+                        });
+                    }
+                    
+                    document.getElementById('editModal').style.display = 'flex';
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    alert('❌ Не удалось загрузить данные бронирования');
+                });
+        }
+
+        async function saveEditReservation() {
+            const id = parseInt(document.getElementById('editReservationId').value);
+            const clientId = parseInt(document.getElementById('editClientId').value);
+            const clientName = document.getElementById('editClientName').value.trim();
+            const clientLastname = document.getElementById('editClientLastname').value.trim();
+            const clientPhone = document.getElementById('editClientPhone').value.trim();
+            const adminId = parseInt(document.getElementById('editAdminSelect').value);
+            const roomId = parseInt(document.getElementById('editRoomSelect').value);
+            const checkIn = document.getElementById('editCheckIn').value;
+            const checkOut = document.getElementById('editCheckOut').value;
+            const status = document.getElementById('editStatus').value;
+
+            const selectedServices = [];
+            document.querySelectorAll('#editServicesContainer input[type="checkbox"]:checked').forEach(cb => {
+                selectedServices.push(parseInt(cb.value));
+            });
+            
+            if (!clientName || !clientLastname || !clientPhone || !checkIn || !checkOut) {
+                alert('❌ Заполните все обязательные поля');
+                return;
+            }
+            
+            if (checkIn >= checkOut) {
+                alert('❌ Дата заезда должна быть раньше даты выезда');
+                return;
+            }
+            
+            const updateData = {
+                c_name: clientName,
+                c_lastname: clientLastname,
+                c_tel: clientPhone,
+                r_datearrival: checkIn,
+                r_datedeparture: checkOut,
+                r_st: status,
+                service_ids: selectedServices
+            };
+            
+            if (adminId) updateData.a_id = adminId;
+            if (roomId) updateData.n_id = roomId;
+            
+            try {
+                const response = await fetch(`/reservation/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updateData)
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Ошибка обновления');
+                }
+                
+                closeEditModal();
+                loadReservations();
+                alert('✅ Бронирование обновлено');
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('❌ ' + error.message);
+            }
+        }
+
+        async function deleteReservation(id) {
+            if (!confirm('Отменить бронирование?')) return;
+            
+            try {
+                const response = await fetch(`/reservation/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Ошибка удаления');
+                }
+                
+                loadReservations();
+                alert('✅ Бронирование отменено');
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('❌ ' + error.message);
+            }
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        window.onclick = function(e) {
+            if (e.target === document.getElementById('editModal')) {
+                closeEditModal();
+            }
+        }
+
+        document.getElementById('searchInput').addEventListener('input', renderTable);
+        document.getElementById('statusFilter').addEventListener('change', renderTable);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadLists();
+            loadReservations();
+        });
+    </script>
+</body>
+</html>
