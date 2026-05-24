@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Услуги | Hotel</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .services-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 20px; }
+        .add-btn {
+            background: linear-gradient(135deg, #2a0808, #4a1010); color: #cc8888;
+            border: 1px solid #8b0000; padding: 12px 24px; border-radius: 6px 18px 6px 18px;
+            font-family: 'Cinzel', serif; cursor: pointer; transition: 0.3s;
+        }
+        .add-btn:hover { background: #5a1515; color: #ffaaaa; box-shadow: 0 0 20px rgba(180,20,30,0.4); }
+        .services-container { max-width: 1000px; margin: 30px auto; padding: 0 30px; }
+        .services-list { background: rgba(8,3,5,0.85); border-radius: 10px 28px 10px 28px; overflow: hidden; margin: 20px 0; border: 1px solid #3a1515; }
+        .service-item { display: flex; justify-content: space-between; align-items: center; padding: 22px 32px; border-bottom: 1px solid #2a1010; }
+        .service-item:hover { background: rgba(100,20,25,0.15); }
+        .service-info { flex: 1; }
+        .service-name { font-size: 1.1rem; color: #d4a0a0; }
+        .service-price { font-weight: bold; color: #cc5555; font-size: 1.3rem; margin: 0 20px; }
+        .service-actions { display: flex; gap: 10px; }
+        .service-actions button {
+            padding: 8px 16px; background: #2a0808; border: 1px solid #8b0000;
+            color: #cc8888; border-radius: 6px 12px 6px 12px; cursor: pointer;
+            font-family: 'Cinzel', serif;
+        }
+        .service-actions button:hover { background: #4a1010; color: #ffaaaa; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #aa5555; text-decoration: none; }
+        .back-link:hover { color: #cc7777; }
+        h1 { font-family: 'UnifrakturMaguntia', cursive; font-size: 2rem; color: #cc7777; }
+    </style>
+</head>
+<body>
+    <header class="header"><div class="logo" onclick="window.location.href='/'"><span>Hotel</span></div>
+        <div class="user-profile"><span class="username">Администратор</span><div class="avatar" onclick="window.location.href='profile.html'">👤</div></div>
+    </header>
+    <main><div class="services-container">
+        <a href="/" class="back-link">← На главную</a>
+        <div class="services-header">
+            <h1>🍽️ Дополнительные услуги</h1>
+            <button class="add-btn" onclick="openAddServiceModal()">➕ Добавить услугу</button>
+        </div>
+        <div class="services-list" id="servicesList"></div>
+    </div></main>
+    <footer class="footer"><p>Hotel Management System © 2026</p></footer>
+
+    <div id="serviceModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeServiceModal()">&times;</span>
+            <h2 id="serviceModalTitle">Добавить услугу</h2>
+            <input type="hidden" id="editServiceId">
+            <input type="text" id="serviceName" placeholder="Название услуги" required>
+            <input type="number" id="servicePrice" placeholder="Цена (₽)" required>
+            <div class="modal-buttons">
+                <button onclick="saveService()">Сохранить</button>
+                <button onclick="closeServiceModal()">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let services = JSON.parse(localStorage.getItem('hotel_services') || '[{"id":1,"name":"Завтрак","price":800},{"id":2,"name":"Обед в номер","price":1200},{"id":3,"name":"Спа-процедуры","price":2500},{"id":4,"name":"Трансфер из аэропорта","price":1800}]');
+        let currentEditServiceId = null;
+
+        function renderServices() {
+            document.getElementById('servicesList').innerHTML = services.map(s => `
+                <div class="service-item">
+                    <div class="service-info">
+                        <div class="service-name">✨ ${s.name}</div>
+                    </div>
+                    <div class="service-price">${s.price.toLocaleString()} ₽</div>
+                    <div class="service-actions">
+                        <button onclick="openEditServiceModal(${s.id})">✏️</button>
+                        <button onclick="deleteService(${s.id})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openAddServiceModal() {
+            currentEditServiceId = null;
+            document.getElementById('serviceModalTitle').innerText = 'Добавить услугу';
+            document.getElementById('editServiceId').value = '';
+            document.getElementById('serviceName').value = '';
+            document.getElementById('servicePrice').value = '';
+            document.getElementById('serviceModal').style.display = 'flex';
+        }
+
+        function openEditServiceModal(id) {
+            const service = services.find(s => s.id === id);
+            if(service) {
+                currentEditServiceId = id;
+                document.getElementById('serviceModalTitle').innerText = 'Редактировать услугу';
+                document.getElementById('editServiceId').value = id;
+                document.getElementById('serviceName').value = service.name;
+                document.getElementById('servicePrice').value = service.price;
+                document.getElementById('serviceModal').style.display = 'flex';
+            }
+        }
+
+        function saveService() {
+            const name = document.getElementById('serviceName').value.trim();
+            const price = parseInt(document.getElementById('servicePrice').value);
+            
+            if(!name || !price || price <= 0) { alert('❌ Введите корректные данные'); return; }
+            
+            if(currentEditServiceId) {
+                const index = services.findIndex(s => s.id === currentEditServiceId);
+                if(index !== -1) {
+                    services[index] = { ...services[index], name, price };
+                }
+            } else {
+                const newId = Math.max(...services.map(s => s.id), 0) + 1;
+                services.push({ id: newId, name, price });
+            }
+            
+            localStorage.setItem('hotel_services', JSON.stringify(services));
+            renderServices();
+            closeServiceModal();
+            alert('✅ Услуга сохранена');
+        }
+
+        function deleteService(id) {
+            if(confirm('Удалить услугу?')) {
+                services = services.filter(s => s.id !== id);
+                localStorage.setItem('hotel_services', JSON.stringify(services));
+                renderServices();
+                alert('✅ Услуга удалена');
+            }
+        }
+
+        function closeServiceModal() {
+            document.getElementById('serviceModal').style.display = 'none';
+        }
+
+        window.onclick = function(e) {
+            if(e.target === document.getElementById('serviceModal')) closeServiceModal();
+        }
+
+        renderServices();
+    </script>
+</body>
+</html>

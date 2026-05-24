@@ -1,0 +1,324 @@
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Cinzel:wght@400;600;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Cinzel', 'Segoe UI', serif;
+    background: linear-gradient(135deg, #080000 0%, #0f0202 25%, #050000 50%, #0a0101 75%, #030000 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    color: #d4c5c5;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 30% 50%, rgba(180, 20, 30, 0.12), transparent 65%),
+                radial-gradient(circle at 80% 40%, rgba(200, 30, 40, 0.08), transparent 60%);
+    pointer-events: none;
+    z-index: -1;
+    animation: bloodPulse 6s ease-in-out infinite;
+}
+
+@keyframes bloodPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: repeating-linear-gradient(45deg, rgba(180, 20, 30, 0.02) 0px, rgba(180, 20, 30, 0.02) 2px, transparent 2px, transparent 8px);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.header {
+    background: rgba(5, 2, 3, 0.96);
+    backdrop-filter: blur(12px);
+    padding: 20px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 30px rgba(180, 20, 30, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 2px solid #8b0000;
+}
+
+.logo {
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #e8a0a0, #cc3333, #990000);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+.logo span {
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-size: 2rem;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.username {
+    font-family: 'Cinzel', serif;
+    font-size: 0.95rem;
+    color: #d4a0a0;
+    letter-spacing: 1px;
+}
+
+.avatar {
+    background: linear-gradient(135deg, #5a0000, #8b0000);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: 0 0 18px rgba(200, 20, 30, 0.5);
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.avatar:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 28px rgba(220, 30, 40, 0.8);
+}
+
+.grid-container {
+    max-width: 100%;
+    width: 100%;
+    margin: 50px auto;
+    padding: 0 40px;
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 35px;
+}
+
+.card {
+    background: linear-gradient(135deg, rgba(12, 5, 7, 0.92), rgba(8, 3, 5, 0.96));
+    backdrop-filter: blur(8px);
+    border-radius: 8px 28px 8px 28px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6);
+    transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 45px 35px;
+    min-height: 240px;
+    border: 1px solid rgba(139, 0, 0, 0.4);
+    border-top: 2px solid #8b0000;
+}
+
+.card::before {
+    content: '⚔️';
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    font-size: 0.8rem;
+    opacity: 0.3;
+    color: #8b0000;
+}
+
+.card::after {
+    content: '⚔️';
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
+    font-size: 0.8rem;
+    opacity: 0.3;
+    color: #8b0000;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 18px 45px rgba(180, 20, 30, 0.4);
+    border-color: rgba(200, 30, 40, 0.7);
+    background: linear-gradient(135deg, #1a0508, #0f0305);
+}
+
+.card-large {
+    grid-column: span 2;
+    min-height: 250px;
+}
+
+.card-half {
+    grid-column: span 1;
+    min-height: 210px;
+}
+
+.card-content {
+    text-align: center;
+    padding: 15px;
+    position: relative;
+    z-index: 2;
+}
+
+.icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 6px rgba(180, 0, 0, 0.6));
+    transition: all 0.3s;
+}
+
+.card:hover .icon {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 15px rgba(220, 30, 40, 0.7));
+}
+
+.card h2 {
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-size: 1.8rem;
+    font-weight: 400;
+    background: linear-gradient(135deg, #f0d0d0, #cc7777, #aa4444);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 14px;
+}
+
+.card p {
+    font-family: 'Cinzel', serif;
+    color: #aa8888;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.card:hover p {
+    color: #ccaaaa;
+}
+
+.footer {
+    text-align: center;
+    padding: 28px;
+    color: #5a3a3a;
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    margin-top: auto;
+    border-top: 1px solid rgba(139, 0, 0, 0.3);
+    background: rgba(3, 1, 2, 0.8);
+    letter-spacing: 1px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    max-width: 500px;
+    background: linear-gradient(135deg, rgba(12, 5, 7, 0.98), rgba(8, 3, 5, 0.99));
+    border-radius: 12px 36px 12px 36px;
+    padding: 35px;
+    border: 1px solid #8b0000;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+}
+
+.modal-content h2 {
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-size: 1.8rem;
+    color: #cc7777;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.modal-content input, .modal-content select {
+    width: 100%;
+    padding: 12px 16px;
+    background: #0a0305;
+    border: 1px solid #5a1515;
+    border-radius: 6px 16px 6px 16px;
+    color: #d4a0a0;
+    font-family: 'Cinzel', serif;
+    margin-bottom: 15px;
+}
+
+.modal-content input:focus, .modal-content select:focus {
+    outline: none;
+    border-color: #cc3333;
+    box-shadow: 0 0 12px rgba(200, 30, 40, 0.4);
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.modal-buttons button {
+    flex: 1;
+    padding: 12px;
+    background: #2a0808;
+    border: 1px solid #8b0000;
+    color: #cc8888;
+    border-radius: 6px 16px 6px 16px;
+    cursor: pointer;
+    font-family: 'Cinzel', serif;
+}
+
+.modal-buttons button:hover {
+    background: #4a1010;
+    color: #ffaaaa;
+}
+
+.close-modal {
+    float: right;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #8a6a6a;
+}
+
+.close-modal:hover {
+    color: #ff8888;
+}
+
+@media (max-width: 1024px) {
+    .grid-container { padding: 0 25px; gap: 25px; }
+    .card h2 { font-size: 1.5rem; }
+    .icon { font-size: 2.5rem; }
+}
+
+@media (max-width: 768px) {
+    .grid-container { grid-template-columns: 1fr; padding: 0 20px; }
+    .card-large, .card-half { grid-column: span 1; }
+    .header { padding: 15px 25px; }
+    .logo { font-size: 1.4rem; }
+}

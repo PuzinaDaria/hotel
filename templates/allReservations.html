@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Все бронирования | Hotel</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .actions-bar { display: flex; justify-content: space-between; margin-bottom: 30px; flex-wrap: wrap; gap: 20px; }
+        .search-box, .filter-select {
+            background: rgba(8,3,5,0.9); border: 1px solid #5a0000; color: #d4a0a0;
+            padding: 14px 22px; border-radius: 6px 20px 6px 20px; font-family: 'Cinzel', serif;
+        }
+        .search-box:focus, .filter-select:focus { outline: none; border-color: #cc3333; box-shadow: 0 0 14px rgba(200,30,40,0.4); }
+        .reservations-table {
+            width: 100%; border-collapse: collapse; background: rgba(8,3,5,0.85);
+            border-radius: 8px 24px 8px 24px; overflow: hidden; font-family: 'Cinzel', serif;
+        }
+        .reservations-table th, .reservations-table td { padding: 18px; text-align: left; border-bottom: 1px solid #3a1515; }
+        .reservations-table th { background: #0a0204; color: #cc8888; }
+        .reservations-table tr:hover { background: rgba(100,20,25,0.2); }
+        .status { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; }
+        .status.confirmed { background: #1a0a0a; color: #aa5555; border: 1px solid #8b0000; }
+        .status.pending { background: #1a1508; color: #c9a03d; border: 1px solid #8b691b; }
+        .status.cancelled { background: #1a0505; color: #661111; border: 1px solid #440000; text-decoration: line-through; }
+        .action-btn {
+            padding: 6px 16px; border: none; border-radius: 5px 12px 5px 12px; cursor: pointer;
+            font-family: 'Cinzel', serif; margin: 0 5px; transition: 0.2s;
+        }
+        .edit-btn { background: #2a1515; color: #cc8888; border: 1px solid #8b0000; }
+        .cancel-btn { background: #2a0505; color: #aa5555; border: 1px solid #660000; }
+        .action-btn:hover { transform: scale(0.96); box-shadow: 0 0 12px rgba(200,30,40,0.4); }
+        .back-link { display: inline-block; margin-bottom: 25px; color: #aa5555; text-decoration: none; font-family: 'Cinzel', serif; }
+        .back-link:hover { color: #cc7777; }
+        h1 { font-family: 'UnifrakturMaguntia', cursive; font-size: 2rem; color: #cc7777; margin-bottom: 25px; }
+        main { max-width: 100%; margin: 30px 40px; padding: 0; width: calc(100% - 80px); }
+    </style>
+</head>
+<body>
+    <header class="header"><div class="logo" onclick="window.location.href='/'"><span>Hotel</span></div>
+        <div class="user-profile"><span class="username">Администратор</span><div class="avatar" onclick="window.location.href='profile.html'">👤</div></div>
+    </header>
+    <main><a href="/" class="back-link">← На главную</a><h1>📋 Все бронирования</h1>
+        <div class="actions-bar"><input type="text" class="search-box" placeholder="Поиск по имени или номеру..." id="searchInput">
+            <select class="filter-select" id="statusFilter"><option value="all">Все статусы</option><option value="confirmed">Подтверждено</option><option value="pending">Ожидание</option><option value="cancelled">Отменено</option></select>
+        </div>
+        <table class="reservations-table"><thead><tr><th>ID</th><th>Гость</th><th>Телефон</th><th>Номер</th><th>Заезд</th><th>Выезд</th><th>Статус</th><th>Действия</th></tr></thead><tbody id="tableBody"></tbody></table>
+    </main>
+    <footer class="footer"><p>Hotel Management System © 2026</p></footer>
+    <script>
+        let reservations = JSON.parse(localStorage.getItem('hotel_reservations') || '[{"id":1001,"guest":"Иван Петров","phone":"+7 999 123-45-67","room":"101","checkIn":"2026-06-01","checkOut":"2026-06-05","status":"confirmed"},{"id":1002,"guest":"Мария Смирнова","phone":"+7 999 234-56-78","room":"205","checkIn":"2026-06-02","checkOut":"2026-06-07","status":"pending"},{"id":1003,"guest":"Алексей Иванов","phone":"+7 999 345-67-89","room":"312","checkIn":"2026-06-03","checkOut":"2026-06-06","status":"confirmed"},{"id":1004,"guest":"Елена Козлова","phone":"+7 999 456-78-90","room":"108","checkIn":"2026-06-05","checkOut":"2026-06-10","status":"cancelled"}]');
+        
+        function renderTable() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const filter = document.getElementById('statusFilter').value;
+            const filtered = reservations.filter(r => (filter === 'all' || r.status === filter) && (r.guest.toLowerCase().includes(search) || r.room.includes(search)));
+            document.getElementById('tableBody').innerHTML = filtered.map(r => `<tr><td>${r.id}</td><td>${r.guest}</td><td>${r.phone}</td><td>${r.room}</td><td>${r.checkIn}</td><td>${r.checkOut}</td><td><span class="status ${r.status}">${r.status === 'confirmed' ? 'Подтверждено' : r.status === 'pending' ? 'Ожидание' : 'Отменено'}</span></td><td><button class="action-btn edit-btn" onclick="editReservation(${r.id})">✏️</button><button class="action-btn cancel-btn" onclick="cancelReservation(${r.id})">🗑️</button></td>`).join('');
+        }
+        
+        function editReservation(id) {
+            const res = reservations.find(r => r.id === id);
+            const newGuest = prompt('Новое имя гостя:', res.guest);
+            const newPhone = prompt('Новый телефон:', res.phone);
+            if(newGuest && newPhone) {
+                res.guest = newGuest;
+                res.phone = newPhone;
+                localStorage.setItem('hotel_reservations', JSON.stringify(reservations));
+                renderTable();
+                alert('✅ Бронирование обновлено');
+            }
+        }
+        
+        function cancelReservation(id) {
+            if(confirm('Отменить бронирование?')) {
+                reservations = reservations.map(r => r.id === id ? {...r, status: 'cancelled'} : r);
+                localStorage.setItem('hotel_reservations', JSON.stringify(reservations));
+                renderTable();
+            }
+        }
+        
+        document.getElementById('searchInput').addEventListener('input', renderTable);
+        document.getElementById('statusFilter').addEventListener('change', renderTable);
+        renderTable();
+    </script>
+</body>
+</html>
